@@ -1,0 +1,1 @@
+Function for auto unzipping archives uploaded to Yandex Cloud Object Storage

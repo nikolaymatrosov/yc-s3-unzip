@@ -1,0 +1,45 @@
+service: unzip-demo
+frameworkVersion: ">=1.1.0"
+configValidationMode: off
+# Load environment variables from .env file
+useDotenv: true
+
+provider:
+  name: yandex-cloud
+  runtime: python39-preview
+
+plugins:
+  - serverless-yandex-cloud
+
+package:
+  exclude:
+    - ./**
+  include:
+    - main.py
+    - requirements.txt
+
+functions:
+  s3-unzip:
+    # this is formatted as <FILENAME>.<HANDLER>
+    handler: main.handler
+    memory: 512
+    timeout: 600
+    # Serverless framework support referencing variable from variety of different sources
+    # For more info see: https://www.serverless.com/framework/docs/providers/aws/guide/variables/
+    environment:
+      AWS_ACCESS_KEY_ID: ${env:AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${env:AWS_SECRET_ACCESS_KEY}
+#    events:
+#      - s3:
+#          events:
+#            - create.object
+#          bucketId: ${env:BUCKET}
+#          prefix: ${env:PREFIX}
+#          suffix: '.zip'
+#          serviceAccount: unzip-sa
+
+resources:
+  unzip-sa:
+    type: yc::ServiceAccount
+    roles:
+      - serverless.functions.invoker
